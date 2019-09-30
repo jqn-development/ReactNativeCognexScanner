@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>537817737531-fjbjp1u7l4g2948k5gmre2dmph7572le.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.537817737531-fjbjp1u7l4g2948k5gmre2dmph7572le</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAJIcFAbGgdCmNOE7XCMnEfuFJMeAWmEIc</string>
+	<key>GCM_SENDER_ID</key>
+	<string>537817737531</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>org.reactjs.native.example.ReactNativeCognexScanner</string>
+	<key>PROJECT_ID</key>
+	<string>dealerslink-1103</string>
+	<key>STORAGE_BUCKET</key>
+	<string>dealerslink-1103.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:537817737531:ios:9ef7ccb718d4b2573cef1e</string>
+	<key>DATABASE_URL</key>
+	<string>https://dealerslink-1103.firebaseio.com</string>
+</dict>
+</plist>

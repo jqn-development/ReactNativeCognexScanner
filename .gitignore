@@ -58,3 +58,4 @@ buck-out/
 # Misc
 #
 .env
+Pods/

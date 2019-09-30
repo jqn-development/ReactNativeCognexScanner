@@ -1,0 +1,43 @@
+# Uncomment the next line to define a global platform for your project
+platform :ios, '9.0'
+
+target 'ReactNativeCognexScanner' do
+  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
+  # use_frameworks!
+
+# See http://facebook.github.io/react-native/docs/integration-with-existing-apps.html#configuring-cocoapods-dependencies
+pod 'React', :path => '../node_modules/react-native', :subspecs => [
+  'Core',
+  'CxxBridge', # Include this for RN >= 0.47
+  'DevSupport', # Include this to enable In-App Devmenu if RN >= 0.43
+  'RCTText',
+  'RCTNetwork',
+  'RCTWebSocket', # Needed for debugging
+  'RCTAnimation', # Needed for FlatList and animations running on native UI thread
+  # Add any other subspecs you want to use in your project
+]
+
+# Explicitly include Yoga if you are using RN >= 0.42.0
+pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
+pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
+pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+
+# Third party deps podspec link
+# Pods for ReactNativeCognexScanner
+pod 'Firebase/Core'
+
+pod 'react-native-camera', path: '../node_modules/react-native-camera', subspecs: [
+  'TextDetector',
+  'FaceDetectorMLKit',
+  'BarcodeDetectorMLKit'
+]
+
+end
+
+post_install do |installer|
+installer.pods_project.targets.each do |target|
+  if target.name == "React"
+    target.remove_from_project
+  end
+end
+end
