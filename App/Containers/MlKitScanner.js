@@ -71,17 +71,28 @@ export default class CameraScreen extends React.Component {
     });
   }
 
+  // zoomOut() {
+  //   this.setState({
+  //     zoom: this.state.zoom - 0.1 < 0 ? 0 : this.state.zoom - 0.1,
+  //   });
+  // }
+
+  // zoomIn() {
+  //   this.setState({
+  //     zoom: this.state.zoom + 0.1 > 1 ? 1 : this.state.zoom + 0.1,
+  //   });
+  // }
+
   zoomOut() {
     this.setState({
-      zoom: this.state.zoom - 0.1 < 0 ? 0 : this.state.zoom - 0.1,
+      zoom: this.state.zoom - 0.01 < 0 ? 0 : this.state.zoom - 0.01,
     });
   }
 
   zoomIn() {
-    // this.setState({
-    //   zoom: this.state.zoom + 0.1 > 1 ? 1 : this.state.zoom + 0.1,
-    // });
-    this.setState({ zoom: 0.02 });
+    this.setState({
+      zoom: this.state.zoom + 0.01 > 1 ? 1 : this.state.zoom + 0.01,
+    });
   }
 
   setFocusDepth(depth) {
@@ -114,14 +125,42 @@ export default class CameraScreen extends React.Component {
     }
   };
 
-  toggle = value => () => {
-    console.log("value", value);
+  // toggle = value => () => {
+  //   console.log("value", value);
+  //   this.setState(prevState => ({ [value]: !prevState[value] }));
+  //   setTimeout(
+  //     () =>
+  //       this.setState(prevState => ({ ["canDetectText"]: !prevState[value] })),
+  //     5000,
+  //   );
+  // };
+
+  toggle = value => () =>
     this.setState(prevState => ({ [value]: !prevState[value] }));
-    setTimeout(
-      () =>
-        this.setState(prevState => ({ ["canDetectText"]: !prevState[value] })),
-      5000,
-    );
+
+  _zoomCamera = progress => {
+    // Zoom in
+    if (progress <= 0.9) {
+      this.setState({ zoom: 0.002 });
+    }
+    if (progress <= 0.6) {
+      this.setState({ zoom: 0.004 });
+    }
+    if (progress <= 0.3) {
+      this.setState({ zoom: 0.006 });
+    }
+    // Zoom out
+    if (this.state.zoom !== 0) {
+      if (progress >= 2) {
+        this.setState({ zoom: 0.004 });
+      }
+      if (progress >= 3) {
+        this.setState({ zoom: 0.002 });
+      }
+      if (progress >= 4) {
+        this.setState({ zoom: 0 });
+      }
+    }
   };
 
   facesDetected = ({ faces }) => this.setState({ faces });
@@ -220,27 +259,32 @@ export default class CameraScreen extends React.Component {
     </React.Fragment>
   );
 
+  // textRecognized = object => {
+  //   const { textBlocks } = object;
+  //   console.log("vin", object);
+  //   this.setState({ textBlocks }, () => {
+  //     if (textBlocks.length > 0) {
+  //       const filtered = textBlocks.filter(
+  //         textblock => textblock.value.length >= 12,
+  // );
+  // const blocksarray = filtered.map(i => i.value);
+  // need to add blocksarray to new empty array
+  // const newBlocksArray = []
+  // console.log("filtered", blocksarray);
+  // }
+  // console.log("textBlocks", textBlocks);
+  // this.setState({ canDetectText: false });
+  // setTimeout(() => console.log("Five Seconds"), 5000);
+  // if (textBlocks.length > 0) {
+  // if (textBlocks.value.length >= 17) {
+  // }
+  // }
+  //   });
+  // };
+
   textRecognized = object => {
     const { textBlocks } = object;
-    console.log("vin", object);
-    this.setState({ textBlocks }, () => {
-      if (textBlocks.length > 0) {
-        const filtered = textBlocks.filter(
-          textblock => textblock.value.length >= 12,
-        );
-        const blocksarray = filtered.map(i => i.value);
-        // need to add blocksarray to new empty array
-        // const newBlocksArray = []
-        console.log("filtered", blocksarray);
-      }
-      // console.log("textBlocks", textBlocks);
-      // this.setState({ canDetectText: false });
-      // setTimeout(() => console.log("Five Seconds"), 5000);
-      // if (textBlocks.length > 0) {
-      // if (textBlocks.value.length >= 17) {
-      // }
-      // }
-    });
+    this.setState({ textBlocks });
   };
 
   barcodeRecognized = ({ barcodes }) => this.setState({ barcodes });
@@ -274,27 +318,7 @@ export default class CameraScreen extends React.Component {
       <PinchZoomView
         style={{ flex: 1 }}
         onPinchProgress={progress => {
-          if (progress <= 0.9) {
-            this.setState({ zoom: 0.001 });
-          }
-          if (progress <= 0.6) {
-            this.setState({ zoom: 0.002 });
-          }
-          if (progress <= 0.3) {
-            this.setState({ zoom: 0.004 });
-          }
-
-          if (this.state.zoom !== 0) {
-            if (progress >= 2) {
-              this.setState({ zoom: 0.002 });
-            }
-            if (progress >= 3) {
-              this.setState({ zoom: 0.001 });
-            }
-            if (progress >= 4) {
-              this.setState({ zoom: 0 });
-            }
-          }
+          this._zoomCamera(progress);
         }}
         onPinchStart={() => {}}
         onPinchEnd={() => {}}
@@ -313,6 +337,7 @@ export default class CameraScreen extends React.Component {
           whiteBalance={this.state.whiteBalance}
           ratio={this.state.ratio}
           focusDepth={this.state.depth}
+          captureAudio={false}
           trackingEnabled
           androidCameraPermissionOptions={{
             title: "Permission to use camera",
