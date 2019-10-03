@@ -4,6 +4,8 @@ import { StyleSheet, Text, View, TouchableOpacity, Slider } from "react-native";
 // eslint-disable-next-line import/no-unresolved
 import { RNCamera } from "react-native-camera";
 
+import PinchZoomView from "../Components/GestureViews/PinchZoomView";
+
 const flashModeOrder = {
   off: "on",
   on: "auto",
@@ -76,9 +78,10 @@ export default class CameraScreen extends React.Component {
   }
 
   zoomIn() {
-    this.setState({
-      zoom: this.state.zoom + 0.1 > 1 ? 1 : this.state.zoom + 0.1,
-    });
+    // this.setState({
+    //   zoom: this.state.zoom + 0.1 > 1 ? 1 : this.state.zoom + 0.1,
+    // });
+    this.setState({ zoom: 0.02 });
   }
 
   setFocusDepth(depth) {
@@ -268,204 +271,233 @@ export default class CameraScreen extends React.Component {
   renderCamera() {
     const { canDetectFaces, canDetectText, canDetectBarcode } = this.state;
     return (
-      <RNCamera
-        ref={ref => {
-          this.camera = ref;
-        }}
-        style={{
-          flex: 1,
-        }}
-        type={this.state.type}
-        flashMode={this.state.flash}
-        autoFocus={this.state.autoFocus}
-        zoom={this.state.zoom}
-        whiteBalance={this.state.whiteBalance}
-        ratio={this.state.ratio}
-        focusDepth={this.state.depth}
-        trackingEnabled
-        androidCameraPermissionOptions={{
-          title: "Permission to use camera",
-          message: "We need your permission to use your camera",
-          buttonPositive: "Ok",
-          buttonNegative: "Cancel",
-        }}
-        faceDetectionLandmarks={
-          RNCamera.Constants.FaceDetection.Landmarks
-            ? RNCamera.Constants.FaceDetection.Landmarks.all
-            : undefined
-        }
-        faceDetectionClassifications={
-          RNCamera.Constants.FaceDetection.Classifications
-            ? RNCamera.Constants.FaceDetection.Classifications.all
-            : undefined
-        }
-        onFacesDetected={canDetectFaces ? this.facesDetected : null}
-        onTextRecognized={canDetectText ? this.textRecognized : null}
-        onGoogleVisionBarcodesDetected={
-          canDetectBarcode ? this.barcodeRecognized : null
-        }
-        googleVisionBarcodeType={
-          RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeType.ALL
-        }
-        // rectOfInterest={{ x: 0, y: 0, widht: 100, height: 60 }}
-      >
-        <View
-          style={{
-            flex: 0.5,
-          }}
-        >
-          <View
-            style={{
-              backgroundColor: "transparent",
-              flexDirection: "row",
-              justifyContent: "space-around",
-            }}
-          >
-            <TouchableOpacity
-              style={styles.flipButton}
-              onPress={this.toggleFacing.bind(this)}
-            >
-              <Text style={styles.flipText}> FLIP </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.flipButton}
-              onPress={this.toggleFlash.bind(this)}
-            >
-              <Text style={styles.flipText}> FLASH: {this.state.flash} </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.flipButton}
-              onPress={this.toggleWB.bind(this)}
-            >
-              <Text style={styles.flipText}>
-                {" "}
-                WB: {this.state.whiteBalance}{" "}
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View
-            style={{
-              backgroundColor: "transparent",
-              flexDirection: "row",
-              justifyContent: "space-around",
-            }}
-          >
-            <TouchableOpacity
-              onPress={this.toggle("canDetectFaces")}
-              style={styles.flipButton}
-            >
-              <Text style={styles.flipText}>
-                {!canDetectFaces ? "Detect Faces" : "Detecting Faces"}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={this.toggle("canDetectText")}
-              style={styles.flipButton}
-            >
-              <Text style={styles.flipText}>
-                {!canDetectText ? "Detect Text" : "Detecting Text"}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={this.toggle("canDetectBarcode")}
-              style={styles.flipButton}
-            >
-              <Text style={styles.flipText}>
-                {!canDetectBarcode ? "Detect Barcode" : "Detecting Barcode"}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View
-          style={{
-            flex: 0.4,
-            backgroundColor: "transparent",
-            flexDirection: "row",
-            alignSelf: "flex-end",
-          }}
-        >
-          <Slider
-            style={{ width: 150, marginTop: 15, alignSelf: "flex-end" }}
-            onValueChange={this.setFocusDepth.bind(this)}
-            step={0.1}
-            disabled={this.state.autoFocus === "on"}
-          />
-        </View>
-        <View
-          style={{
-            flex: 0.1,
-            backgroundColor: "transparent",
-            flexDirection: "row",
-            alignSelf: "flex-end",
-          }}
-        >
-          <TouchableOpacity
-            style={[
-              styles.flipButton,
-              {
-                flex: 0.3,
-                alignSelf: "flex-end",
-                backgroundColor: this.state.isRecording ? "white" : "darkred",
-              },
-            ]}
-            onPress={
-              this.state.isRecording ? () => {} : this.takeVideo.bind(this)
+      <PinchZoomView
+        style={{ flex: 1 }}
+        onPinchProgress={progress => {
+          if (progress <= 0.9) {
+            this.setState({ zoom: 0.001 });
+          }
+          if (progress <= 0.6) {
+            this.setState({ zoom: 0.002 });
+          }
+          if (progress <= 0.3) {
+            this.setState({ zoom: 0.004 });
+          }
+
+          if (this.state.zoom !== 0) {
+            if (progress >= 2) {
+              this.setState({ zoom: 0.002 });
             }
-          >
-            {this.state.isRecording ? (
-              <Text style={styles.flipText}> ☕ </Text>
-            ) : (
-              <Text style={styles.flipText}> REC </Text>
-            )}
-          </TouchableOpacity>
-        </View>
-        {this.state.zoom !== 0 && (
-          <Text style={[styles.flipText, styles.zoomText]}>
-            Zoom: {this.state.zoom}
-          </Text>
-        )}
-        <View
-          style={{
-            flex: 0.1,
-            backgroundColor: "transparent",
-            flexDirection: "row",
-            alignSelf: "flex-end",
+            if (progress >= 3) {
+              this.setState({ zoom: 0.001 });
+            }
+            if (progress >= 4) {
+              this.setState({ zoom: 0 });
+            }
+          }
+        }}
+        onPinchStart={() => {}}
+        onPinchEnd={() => {}}
+      >
+        <RNCamera
+          ref={ref => {
+            this.camera = ref;
           }}
+          style={{
+            flex: 1,
+          }}
+          type={this.state.type}
+          flashMode={this.state.flash}
+          autoFocus={this.state.autoFocus}
+          zoom={this.state.zoom}
+          whiteBalance={this.state.whiteBalance}
+          ratio={this.state.ratio}
+          focusDepth={this.state.depth}
+          trackingEnabled
+          androidCameraPermissionOptions={{
+            title: "Permission to use camera",
+            message: "We need your permission to use your camera",
+            buttonPositive: "Ok",
+            buttonNegative: "Cancel",
+          }}
+          faceDetectionLandmarks={
+            RNCamera.Constants.FaceDetection.Landmarks
+              ? RNCamera.Constants.FaceDetection.Landmarks.all
+              : undefined
+          }
+          faceDetectionClassifications={
+            RNCamera.Constants.FaceDetection.Classifications
+              ? RNCamera.Constants.FaceDetection.Classifications.all
+              : undefined
+          }
+          onFacesDetected={canDetectFaces ? this.facesDetected : null}
+          onTextRecognized={canDetectText ? this.textRecognized : null}
+          onGoogleVisionBarcodesDetected={
+            canDetectBarcode ? this.barcodeRecognized : null
+          }
+          googleVisionBarcodeType={
+            RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeType.ALL
+          }
+          // rectOfInterest={{ x: 0, y: 0, widht: 100, height: 60 }}
         >
-          <TouchableOpacity
-            style={[styles.flipButton, { flex: 0.1, alignSelf: "flex-end" }]}
-            onPress={this.zoomIn.bind(this)}
+          <View
+            style={{
+              flex: 0.5,
+            }}
           >
-            <Text style={styles.flipText}> + </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.flipButton, { flex: 0.1, alignSelf: "flex-end" }]}
-            onPress={this.zoomOut.bind(this)}
+            <View
+              style={{
+                backgroundColor: "transparent",
+                flexDirection: "row",
+                justifyContent: "space-around",
+              }}
+            >
+              <TouchableOpacity
+                style={styles.flipButton}
+                onPress={this.toggleFacing.bind(this)}
+              >
+                <Text style={styles.flipText}> FLIP </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.flipButton}
+                onPress={this.toggleFlash.bind(this)}
+              >
+                <Text style={styles.flipText}> FLASH: {this.state.flash} </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.flipButton}
+                onPress={this.toggleWB.bind(this)}
+              >
+                <Text style={styles.flipText}>
+                  {" "}
+                  WB: {this.state.whiteBalance}{" "}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                backgroundColor: "transparent",
+                flexDirection: "row",
+                justifyContent: "space-around",
+              }}
+            >
+              <TouchableOpacity
+                onPress={this.toggle("canDetectFaces")}
+                style={styles.flipButton}
+              >
+                <Text style={styles.flipText}>
+                  {!canDetectFaces ? "Detect Faces" : "Detecting Faces"}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={this.toggle("canDetectText")}
+                style={styles.flipButton}
+              >
+                <Text style={styles.flipText}>
+                  {!canDetectText ? "Detect Text" : "Detecting Text"}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={this.toggle("canDetectBarcode")}
+                style={styles.flipButton}
+              >
+                <Text style={styles.flipText}>
+                  {!canDetectBarcode ? "Detect Barcode" : "Detecting Barcode"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View
+            style={{
+              flex: 0.4,
+              backgroundColor: "transparent",
+              flexDirection: "row",
+              alignSelf: "flex-end",
+            }}
           >
-            <Text style={styles.flipText}> - </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.flipButton, { flex: 0.25, alignSelf: "flex-end" }]}
-            onPress={this.toggleFocus.bind(this)}
+            <Slider
+              style={{ width: 150, marginTop: 15, alignSelf: "flex-end" }}
+              onValueChange={this.setFocusDepth.bind(this)}
+              step={0.1}
+              disabled={this.state.autoFocus === "on"}
+            />
+          </View>
+          <View
+            style={{
+              flex: 0.1,
+              backgroundColor: "transparent",
+              flexDirection: "row",
+              alignSelf: "flex-end",
+            }}
           >
-            <Text style={styles.flipText}> AF : {this.state.autoFocus} </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.flipButton,
-              styles.picButton,
-              { flex: 0.3, alignSelf: "flex-end" },
-            ]}
-            onPress={this.takePicture.bind(this)}
+            <TouchableOpacity
+              style={[
+                styles.flipButton,
+                {
+                  flex: 0.3,
+                  alignSelf: "flex-end",
+                  backgroundColor: this.state.isRecording ? "white" : "darkred",
+                },
+              ]}
+              onPress={
+                this.state.isRecording ? () => {} : this.takeVideo.bind(this)
+              }
+            >
+              {this.state.isRecording ? (
+                <Text style={styles.flipText}> ☕ </Text>
+              ) : (
+                <Text style={styles.flipText}> REC </Text>
+              )}
+            </TouchableOpacity>
+          </View>
+          {this.state.zoom !== 0 && (
+            <Text style={[styles.flipText, styles.zoomText]}>
+              Zoom: {this.state.zoom}
+            </Text>
+          )}
+          <View
+            style={{
+              flex: 0.1,
+              backgroundColor: "transparent",
+              flexDirection: "row",
+              alignSelf: "flex-end",
+            }}
           >
-            <Text style={styles.flipText}> SNAP </Text>
-          </TouchableOpacity>
-        </View>
-        {!!canDetectFaces && this.renderFaces()}
-        {!!canDetectFaces && this.renderLandmarks()}
-        {!!canDetectText && this.renderTextBlocks()}
-        {!!canDetectBarcode && this.renderBarcodes()}
-      </RNCamera>
+            <TouchableOpacity
+              style={[styles.flipButton, { flex: 0.1, alignSelf: "flex-end" }]}
+              onPress={this.zoomIn.bind(this)}
+            >
+              <Text style={styles.flipText}> + </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.flipButton, { flex: 0.1, alignSelf: "flex-end" }]}
+              onPress={this.zoomOut.bind(this)}
+            >
+              <Text style={styles.flipText}> - </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.flipButton, { flex: 0.25, alignSelf: "flex-end" }]}
+              onPress={this.toggleFocus.bind(this)}
+            >
+              <Text style={styles.flipText}> AF : {this.state.autoFocus} </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.flipButton,
+                styles.picButton,
+                { flex: 0.3, alignSelf: "flex-end" },
+              ]}
+              onPress={this.takePicture.bind(this)}
+            >
+              <Text style={styles.flipText}> SNAP </Text>
+            </TouchableOpacity>
+          </View>
+          {!!canDetectFaces && this.renderFaces()}
+          {!!canDetectFaces && this.renderLandmarks()}
+          {!!canDetectText && this.renderTextBlocks()}
+          {!!canDetectBarcode && this.renderBarcodes()}
+        </RNCamera>
+      </PinchZoomView>
     );
   }
 
