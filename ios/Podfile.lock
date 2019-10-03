@@ -129,23 +129,23 @@ PODS:
   - Protobuf (3.9.2)
   - React (0.59.9):
     - React/Core (= 0.59.9)
-  - react-native-camera/BarcodeDetectorMLKit (3.3.3):
+  - react-native-camera/BarcodeDetectorMLKit (3.6.0):
     - Firebase/MLVision
     - Firebase/MLVisionBarcodeModel
     - React
     - react-native-camera/RCT
     - react-native-camera/RN
-  - react-native-camera/FaceDetectorMLKit (3.3.3):
+  - react-native-camera/FaceDetectorMLKit (3.6.0):
     - Firebase/MLVision
     - Firebase/MLVisionFaceModel
     - React
     - react-native-camera/RCT
     - react-native-camera/RN
-  - react-native-camera/RCT (3.3.3):
+  - react-native-camera/RCT (3.6.0):
     - React
-  - react-native-camera/RN (3.3.3):
+  - react-native-camera/RN (3.6.0):
     - React
-  - react-native-camera/TextDetector (3.3.3):
+  - react-native-camera/TextDetector (3.6.0):
     - Firebase/MLVision
     - Firebase/MLVisionTextModel
     - React
@@ -272,7 +272,7 @@ SPEC CHECKSUMS:
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   Protobuf: 67fb42ba613def994e61854de2b3164f13790cc4
   React: a86b92f00edbe1873a63e4a212c29b7a7ad5224f
-  react-native-camera: 941db9425e984fe31743e78e381a1498dbb92f5f
+  react-native-camera: 4f614d2da6526be735ecbe658c3f57eebfb0686a
   yoga: 03ff42a6f223fb88deeaed60249020d80c3091ee
 
 PODFILE CHECKSUM: 40ed2f3cd21c8238a8d9c687e44ad12a148d634c
