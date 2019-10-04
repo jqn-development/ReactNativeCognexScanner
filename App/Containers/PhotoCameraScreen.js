@@ -23,9 +23,12 @@ class PhotoCameraScreen extends PureComponent {
       );
     }
     return (
-      <ScreenWithCamera>
-        <Text style={{ color: "red" }}>Test content</Text>
-      </ScreenWithCamera>
+      <ScreenWithCamera
+        onZoomProgress={progress => console.log("progress", progress)}
+        onZoomStart={() => {}}
+        onZoomEnd={() => {}}
+        processData={data => console.log("camera data", data)}
+      ></ScreenWithCamera>
     );
   }
 }
